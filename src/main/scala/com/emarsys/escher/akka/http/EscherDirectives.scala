@@ -33,9 +33,10 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherRoute[T](serviceName: List[String])(inner: (String) => Route)(implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route = {
+  def escherAuthenticate[T](trustedServiceNames: List[String])(inner: (String) => Route)
+                           (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route = {
     extract(_.request).map {
-      case r: HttpRequest => authenticate(serviceName, r)
+      case r: HttpRequest => authenticate(trustedServiceNames, r)
       case msg            => Future.failed(new EscherException("Failed to parse HTTP request"))
     }.apply(onComplete(_) {
       case Success(value) => inner(value)
