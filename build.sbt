@@ -1,5 +1,5 @@
 
-name := "escher-scala"
+name := "escher-akka-http"
 organization  := "com.emarsys"
 version       := "0.0.1"
 

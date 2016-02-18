@@ -1,4 +1,4 @@
-package com.emarsys.segmentation.config
+package com.emarsys.escher.akka.http.config
 import com.typesafe.config.Config
 
 import scala.collection.JavaConversions._

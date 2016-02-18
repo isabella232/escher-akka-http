@@ -1,4 +1,4 @@
-package com.emarsys.segmentation.escher
+package com.emarsys.escher.akka.http
 
 import java.net.URI
 

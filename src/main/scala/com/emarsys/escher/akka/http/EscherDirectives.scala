@@ -1,4 +1,4 @@
-package com.emarsys.segmentation.escher
+package com.emarsys.escher.akka.http
 
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.client.RequestBuilding

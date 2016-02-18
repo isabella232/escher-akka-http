@@ -1,12 +1,13 @@
-package com.emarsys.segmentation.escher
+package com.emarsys.escher.akka.http
 
 import java.net.InetSocketAddress
 
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.Materializer
 import com.emarsys.escher.Escher
-import com.emarsys.segmentation.config.EscherConfig
+import com.emarsys.escher.akka.http.config.EscherConfig
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +16,7 @@ trait EscherAuthenticator {
 
   val escherConfig: EscherConfig
 
-  def authenticate(serviceNames: List[String], httpRequest: HttpRequest)(implicit ec: ExecutionContext, mat: akka.stream.Materializer): Future[String] = {
+  def authenticate(serviceNames: List[String], httpRequest: HttpRequest)(implicit ec: ExecutionContext, mat: Materializer): Future[String] = {
 
     val escher = createEscherRequest()
     val address = new InetSocketAddress(escherConfig.hostName, escherConfig.port)
