@@ -9,9 +9,10 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.emarsys.escher.EscherException
+import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 
 trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
 
@@ -46,5 +47,12 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
           AuthenticationFailedRejection(
             AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
     })
+  }
+
+  def parseBody[T](body: String)(inner: T => Route)(implicit format: RootJsonFormat[T]): Route = {
+    Try(body.parseJson.convertTo[T]) match {
+      case Success(parsed) => inner(parsed)
+      case Failure(x)      => reject(MalformedRequestContentRejection(x.getMessage, Option(x.getCause)))
+    }
   }
 }
