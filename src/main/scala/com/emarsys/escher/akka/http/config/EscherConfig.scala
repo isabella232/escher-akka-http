@@ -19,4 +19,7 @@ class EscherConfig(config: Config) {
   def key(service: String): String = findTrustedService(service).map(_.getString("key")).getOrElse("")
 
   def secret(service: String): String = findTrustedService(service).map(_.getString("secret")).getOrElse("")
+
+  def credentialScope(service: String): String = findTrustedService(service).map(_.getString("credential-scope")).getOrElse(credentialScope)
+
 }

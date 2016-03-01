@@ -18,7 +18,7 @@ trait EscherAuthenticator {
 
   def authenticate(serviceNames: List[String], httpRequest: HttpRequest)(implicit ec: ExecutionContext, mat: Materializer): Future[String] = {
 
-    val escher = createEscherRequest()
+    val escher = setupEscher(createEscherForAuth())
     val address = new InetSocketAddress(escherConfig.hostName, escherConfig.port)
     val keymap = serviceNames.map(serviceName => escherConfig.key(serviceName) -> escherConfig.secret(serviceName)).toMap
 
@@ -35,7 +35,11 @@ trait EscherAuthenticator {
     }
   }
 
-  def createEscherRequest(): Escher = new Escher(escherConfig.credentialScope)
+  def createEscherForSigning(serviceName: String): Escher = new Escher(escherConfig.credentialScope(serviceName))
+
+  def createEscherForAuth(): Escher = new Escher(escherConfig.credentialScope)
+
+  def setupEscher(escher: Escher) = escher
     .setAuthHeaderName(escherConfig.authHeaderName)
     .setDateHeaderName(escherConfig.dateHeaderName)
     .setAlgoPrefix(escherConfig.algoPrefix)
