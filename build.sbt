@@ -1,7 +1,7 @@
 
 name := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "0.0.3"
+version       := "0.0.4"
 
 scalaVersion := "2.11.7"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
@@ -18,3 +18,4 @@ libraryDependencies ++= {
   )
 }
 
+publishTo := Some(Resolver.file("releases", new File("releases")))

@@ -7,7 +7,15 @@ Usage
 Add the following to `build.sbt`:
 
     resolvers += "Escher repo" at "https://raw.github.com/emartech/escher-akka-http/master/releases"
-    libraryDependencies += "com.emarsys" % "escher-akka-http" % "0.0.1"
+
+For versions `0.0.1`, `0.0.2` and `0.0.3`:
+
+    libraryDependencies += "com.emarsys" % "escher-akka-http" % "0.0.3"
+
+For versions above `0.0.4` (note the double `%%`):
+
+    libraryDependencies += "com.emarsys" %% "escher-akka-http" % "0.0.4"
+
 
 Example
 -------
@@ -60,3 +68,12 @@ Test:
       }
 
     }
+
+Creating a release
+------------------
+
+Bump the version number in `build.sbt` and run the following command:
+
+    sbt publish
+
+This will build a jar with the new version and place it under the `releases` directory.
