@@ -1,7 +1,5 @@
 package com.emarsys.escher.akka.http
 
-import java.util
-
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
@@ -14,7 +12,6 @@ import com.emarsys.escher.EscherException
 import spray.json._
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Try, Failure, Success}
 
@@ -39,7 +36,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
         escherConfig.secret(serviceName),
         defaultSignedHeaders.union(headers.map(_.name))
       )
-      escherRequest.getHttpRequest
+      escherRequest.getHttpRequest.addHeaders(headers)
     }
   }
 
