@@ -36,7 +36,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
         escherConfig.secret(serviceName),
         defaultSignedHeaders.union(headers.map(_.name))
       )
-      escherRequest.getHttpRequest.addHeaders(headers)
+      escherRequest.getHttpRequest//.addHeaders(headers)
     }
   }
 
@@ -58,7 +58,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   def parseBody[T](body: String)(inner: T => Route)(implicit format: RootJsonFormat[T]): Route = {
     Try(body.parseJson.convertTo[T]) match {
       case Success(parsed) => inner(parsed)
-      case Failure(x)      => reject(MalformedRequestContentRejection(x.getMessage, Option(x.getCause)))
+      case Failure(x)      => reject(MalformedRequestContentRejection(x.getMessage, x.getCause))
     }
   }
 }

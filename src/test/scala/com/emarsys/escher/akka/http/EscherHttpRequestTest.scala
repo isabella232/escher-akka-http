@@ -48,7 +48,7 @@ class EscherHttpRequestTest extends FlatSpec with Matchers {
   it should "add other header with existing key" in {
     val eRequest = new EscherHttpRequest(httpRequest, "")
     eRequest.addHeader("host", "bar")
-    eRequest.getRequestHeaders() shouldBe List(new EscherRequest.Header("host", "trunk.suite.ett.local"), new EscherRequest.Header("host", "bar")).asJava
+    eRequest.getRequestHeaders() shouldBe List(new EscherRequest.Header("host", "trunk.suite.ett.local"), new EscherRequest.Header("Host", "bar")).asJava
   }
 
   it should "return true when has header called after adding it" in {
