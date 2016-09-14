@@ -24,18 +24,18 @@ class EscherHttpDirectiveTest
   private val forwardedHttpsRequest = HttpRequest(
     method = HttpMethods.GET,
     uri = Uri("/"),
-    headers = List(RawHeader("host", "trunk.suite.ett.local"), RawHeader("x-forwarded-proto", "https"))
+    headers = List(RawHeader("host", "trunk.suite.ett.local"), RawHeader("X-Forwarded-Proto", "https"))
   )
 
   private val forwardedHttpRequest = HttpRequest(
     method = HttpMethods.GET,
     uri = Uri("/"),
-    headers = List(RawHeader("host", "trunk.suite.ett.local"), RawHeader("x-forwarded-proto", "http"))
+    headers = List(RawHeader("host", "trunk.suite.ett.local"), RawHeader("X-Forwarded-Proto", "http"))
   )
 
   def route: Route = (get & pathSingleSlash)(checkForwardedHttps(complete("OK")))
-  override val escherConfig: EscherConfig = null
-
+  override val escherConfig: EscherConfig =
+    new EscherConfig(com.typesafe.config.ConfigFactory.load().getConfig("escher"))
 
   "checkForwardedHttps" should {
      "reject forwarded http request" in {

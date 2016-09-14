@@ -41,7 +41,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   }
 
   def escherAuthenticate[T](trustedServiceNames: List[String])(inner: (String) => Route)
-                           (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route = {
+                           (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route =  checkForwardedHttps {
     extract(_.request).map {
       case r: HttpRequest => authenticate(trustedServiceNames, r)
       case msg            => Future.failed(new EscherException("Failed to parse HTTP request"))
@@ -56,7 +56,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   }
 
   def checkForwardedHttps(inner: Route) : Route = (ctx: RequestContext) => {
-    val protocolHeader = ctx.request.headers.find(_.name == "x-forwarded-proto")
+    val protocolHeader = ctx.request.headers.find(_.name.toLowerCase == "x-forwarded-proto")
     val notForwardedHttps = protocolHeader.fold(false)(! _.value().contains("https"))
 
     if (notForwardedHttps) {
