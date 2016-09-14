@@ -1,7 +1,7 @@
 
 name := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "0.0.8"
+version       := "0.0.9"
 
 scalaVersion := "2.11.8"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
