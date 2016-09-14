@@ -55,6 +55,17 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     })
   }
 
+  def checkForwardedHttps(inner: Route) : Route = (ctx: RequestContext) => {
+    val protocolHeader = ctx.request.headers.find(_.name == "x-forwarded-proto")
+    val notForwardedHttps = protocolHeader.fold(false)(! _.value().contains("https"))
+
+    if (notForwardedHttps) {
+      reject(ctx)
+    } else {
+      inner(ctx)
+    }
+  }
+
   def parseBody[T](body: String)(inner: T => Route)(implicit format: RootJsonFormat[T]): Route = {
     Try(body.parseJson.convertTo[T]) match {
       case Success(parsed) => inner(parsed)

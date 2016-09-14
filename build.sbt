@@ -1,7 +1,7 @@
 
 name := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "0.0.6"
+version       := "0.0.7"
 
 scalaVersion := "2.11.8"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
@@ -13,6 +13,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"       %% "akka-http-core"                    % akkaV,
     "com.typesafe.akka"       %% "akka-http-experimental"            % akkaV,
     "com.typesafe.akka"       %% "akka-http-spray-json-experimental" % akkaV,
+    "com.typesafe.akka"       %% "akka-http-testkit"                 % akkaV % "test",
     "org.scalatest"           %% "scalatest"                         % scalaTestV       % "test",
     "com.emarsys"             %  "escher"                            % "0.3"
   )
