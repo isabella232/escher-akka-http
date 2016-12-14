@@ -11,7 +11,7 @@ import akka.stream.Materializer
 import com.emarsys.escher.EscherException
 import spray.json._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Try, Failure, Success}
 
@@ -34,7 +34,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
         escherRequest,
         escherConfig.key(serviceName),
         escherConfig.secret(serviceName),
-        defaultSignedHeaders.union(headers.map(_.name))
+        defaultSignedHeaders.union(headers.map(_.name)).asJava
       )
       escherRequest.getHttpRequest//.addHeaders(headers)
     }

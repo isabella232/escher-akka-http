@@ -1,22 +1,26 @@
 
-name := "escher-akka-http"
-organization  := "com.emarsys"
-version       := "0.0.9"
+val scalaV = "2.12.1"
 
-scalaVersion := "2.11.8"
+name          := "escher-akka-http"
+organization  := "com.emarsys"
+version       := "0.1.0"
+
+scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {
-  val akkaV      = "2.4.10"
-  val scalaTestV = "3.0.0"
+  val akkaHttpV  = "10.0.0"
+  val scalaTestV = "3.0.1"
   Seq(
-    "com.typesafe.akka"  %% "akka-http-core"                    % akkaV,
-    "com.typesafe.akka"  %% "akka-http-experimental"            % akkaV,
-    "com.typesafe.akka"  %% "akka-http-spray-json-experimental" % akkaV,
-    "com.typesafe.akka"  %% "akka-http-testkit"                 % akkaV % "test",
-    "org.scalatest"      %% "scalatest"                         % scalaTestV % "test",
-    "com.emarsys"        %  "escher"                            % "0.3"
+    "com.typesafe.akka"  %% "akka-http-core"       % akkaHttpV,
+    "com.typesafe.akka"  %% "akka-http"            % akkaHttpV,
+    "com.typesafe.akka"  %% "akka-http-spray-json" % akkaHttpV,
+    "com.typesafe.akka"  %% "akka-http-testkit"    % akkaHttpV  % "test",
+    "org.scalatest"      %% "scalatest"            % scalaTestV % "test",
+    "com.emarsys"        %  "escher"               % "0.3"
   )
 }
+
+scalaVersion in ThisBuild := scalaV
 
 publishTo := Some(Resolver.file("releases", new File("releases")))
