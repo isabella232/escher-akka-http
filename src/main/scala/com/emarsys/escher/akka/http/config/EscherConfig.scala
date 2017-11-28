@@ -7,6 +7,7 @@ class EscherConfig(config: Config) {
   val authHeaderName: String = config.getString("auth-header-name")
   val dateHeaderName: String = config.getString("date-header-name")
   val algoPrefix: String = config.getString("algo-prefix")
+  val vendorKey: String = config.getString("vendor-key")
   val hostName: String = config.getString("hostname")
   val port: Int = config.getInt("port")
 

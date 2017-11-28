@@ -43,5 +43,6 @@ trait EscherAuthenticator {
     .setAuthHeaderName(escherConfig.authHeaderName)
     .setDateHeaderName(escherConfig.dateHeaderName)
     .setAlgoPrefix(escherConfig.algoPrefix)
+    .setVendorKey(escherConfig.vendorKey)
 
 }
