@@ -1,15 +1,15 @@
 
-val scalaV = "2.12.1"
+val scalaV = "2.12.4"
 
 name          := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "0.1.1"
+version       := "0.2.0"
 
 scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {
-  val akkaHttpV  = "10.0.0"
+  val akkaHttpV  = "10.0.11"
   val scalaTestV = "3.0.1"
   Seq(
     "com.typesafe.akka"  %% "akka-http-core"       % akkaHttpV,
