@@ -2,6 +2,7 @@ package com.emarsys.escher.akka.http.config
 import com.typesafe.config.Config
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 class EscherConfig(config: Config) {
   val authHeaderName: String = config.getString("auth-header-name")
@@ -12,6 +13,7 @@ class EscherConfig(config: Config) {
   val port: Int = config.getInt("port")
 
   val credentialScope: String = config.getString("credential-scope")
+  val headersToSign = Try{config.getStringList("headers-to-sign").asScala}.getOrElse(List("host", "X-Ems-Date"))
 
   private val trustedServices = config.getConfigList("trusted-services").asScala
   private def findTrustedService(service: String) = trustedServices.find(_.getString("name") == service)
