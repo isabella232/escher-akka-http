@@ -48,7 +48,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }.apply(onComplete(_) {
       case Success(value) => inner(value)
       case Failure(ex) =>
-        logger.debug(ex.getMessage)
+        logger.info("Escher auth failed: " + ex.getMessage)
         reject(
           AuthenticationFailedRejection(
             AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
