@@ -1,9 +1,9 @@
 
-val scalaV = "2.12.4"
+val scalaV = "2.12.6"
 
 name          := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "0.2.2"
+version       := "0.2.3"
 
 scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
@@ -17,7 +17,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"  %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka"  %% "akka-http-testkit"    % akkaHttpV  % "test",
     "org.scalatest"      %% "scalatest"            % scalaTestV % "test",
-    "com.emarsys"        %  "escher"               % "0.3"
+    "com.emarsys"        %  "escher"               % "0.3.1"
   )
 }
 
