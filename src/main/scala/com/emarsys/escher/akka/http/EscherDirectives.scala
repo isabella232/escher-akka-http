@@ -40,11 +40,11 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherAuthenticate[T](trustedServiceNames: List[String])(inner: (String) => Route)
+  def escherAuthenticate[T](trustedServiceNames: List[String])(inner: String => Route)
                            (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route =  checkForwardedHttps {
     extract(_.request).map {
       case r: HttpRequest => authenticate(trustedServiceNames, r)
-      case msg            => Future.failed(new EscherException("Failed to parse HTTP request"))
+      case _              => Future.failed(new EscherException("Failed to parse HTTP request"))
     }.apply(onComplete(_) {
       case Success(value) => inner(value)
       case Failure(ex) =>
@@ -54,6 +54,29 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
             AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
     })
   }
+
+  def escherAuthenticateDirective(trustedServiceNames: List[String])
+                                 (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive[Unit] =
+    extract (_.request) map authenticate(trustedServiceNames) flatMap (onComplete(_)) flatMap passOrReject
+
+  private def authenticate(trustedServiceNames: List[String])
+                          (implicit ec: ExecutionContext, mat: Materializer): PartialFunction[HttpRequest, Future[String]] = {
+    case r: HttpRequest if checkForwardedProtoHeader(r) => authenticate(trustedServiceNames, r)
+    case _                                              => Future.failed(new EscherException("Failed to parse HTTP request"))
+  }
+
+  private def passOrReject(implicit logger: LoggingAdapter): PartialFunction[Try[String], Directive0] = {
+    case Success(_)  => pass
+    case Failure(ex) =>
+      logger.debug(ex.getMessage)
+      reject(AuthenticationFailedRejection(AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
+  }
+
+  private val checkForwardedProtoHeader: HttpRequest => Boolean = _.headers find xForwardedProto forall mustBeHttps
+
+  private val xForwardedProto: HttpHeader => Boolean = _.value().contains("https")
+
+  private val mustBeHttps: HttpHeader => Boolean = _.value().contains("https")
 
   def checkForwardedHttps(inner: Route) : Route = (ctx: RequestContext) => {
     val protocolHeader = ctx.request.headers.find(_.name.toLowerCase == "x-forwarded-proto")
