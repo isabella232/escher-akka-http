@@ -17,11 +17,11 @@ import scala.util.{Try, Failure, Success}
 
 trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
 
-  def signRequest(serviceName: String)(implicit ec: ExecutionContext, mat: Materializer): (HttpRequest) => Future[HttpRequest] = { r =>
+  def signRequest(serviceName: String)(implicit ec: ExecutionContext, mat: Materializer): HttpRequest => Future[HttpRequest] = { r =>
     signRequestWithHeaders(Nil)(serviceName)(ec,mat)(r)
   }
 
-  def signRequestWithHeaders(headers : List[HttpHeader])(serviceName:String)(implicit ec: ExecutionContext, mat: Materializer): (HttpRequest) => Future[HttpRequest] = { r =>
+  def signRequestWithHeaders(headers : List[HttpHeader])(serviceName:String)(implicit ec: ExecutionContext, mat: Materializer): HttpRequest => Future[HttpRequest] = { r =>
 
     val escher = setupEscher(createEscherForSigning(serviceName))
     val defaultSignedHeaders = escherConfig.headersToSign
@@ -36,7 +36,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
         escherConfig.secret(serviceName),
         defaultSignedHeaders.union(headers.map(_.name)).asJava
       )
-      escherRequest.getHttpRequest//.addHeaders(headers)
+      escherRequest.getHttpRequest
     }
   }
 
@@ -56,7 +56,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   }
 
   def escherAuthenticateDirective(trustedServiceNames: List[String])
-                                 (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive[Unit] =
+                                 (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
     extract (_.request) map authenticate(trustedServiceNames) flatMap (onComplete(_)) flatMap passOrReject
 
   private def authenticate(trustedServiceNames: List[String])
@@ -74,7 +74,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
 
   private val checkForwardedProtoHeader: HttpRequest => Boolean = _.headers find xForwardedProto forall mustBeHttps
 
-  private val xForwardedProto: HttpHeader => Boolean = _.value().contains("https")
+  private val xForwardedProto: HttpHeader => Boolean = _.name.toLowerCase == "x-forwarded-proto"
 
   private val mustBeHttps: HttpHeader => Boolean = _.value().contains("https")
 
