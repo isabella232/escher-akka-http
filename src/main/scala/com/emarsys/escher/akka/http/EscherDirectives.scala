@@ -40,23 +40,8 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherAuthenticate[T](trustedServiceNames: List[String])(inner: String => Route)
-                           (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Route =  checkForwardedHttps {
-    extract(_.request).map {
-      case r: HttpRequest => authenticate(trustedServiceNames, r)
-      case _              => Future.failed(new EscherException("Failed to parse HTTP request"))
-    }.apply(onComplete(_) {
-      case Success(value) => inner(value)
-      case Failure(ex) =>
-        logger.debug(ex.getMessage)
-        reject(
-          AuthenticationFailedRejection(
-            AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
-    })
-  }
-
-  def escherAuthenticateDirective(trustedServiceNames: List[String])
-                                 (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
+  def escherAuthenticate(trustedServiceNames: List[String])
+                        (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
     extract (_.request) map authenticate(trustedServiceNames) flatMap (onComplete(_)) flatMap passOrReject
 
   private def authenticate(trustedServiceNames: List[String])
@@ -77,17 +62,6 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   private val xForwardedProto: HttpHeader => Boolean = _.name.toLowerCase == "x-forwarded-proto"
 
   private val mustBeHttps: HttpHeader => Boolean = _.value().contains("https")
-
-  def checkForwardedHttps(inner: Route) : Route = (ctx: RequestContext) => {
-    val protocolHeader = ctx.request.headers.find(_.name.toLowerCase == "x-forwarded-proto")
-    val notForwardedHttps = protocolHeader.fold(false)(! _.value().contains("https"))
-
-    if (notForwardedHttps) {
-      reject(ctx)
-    } else {
-      inner(ctx)
-    }
-  }
 
   def parseBody[T](body: String)(inner: T => Route)(implicit format: RootJsonFormat[T]): Route = {
     Try(body.parseJson.convertTo[T]) match {
