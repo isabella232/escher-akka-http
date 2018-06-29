@@ -9,14 +9,11 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.emarsys.escher.akka.http.config.EscherConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Matchers, WordSpec}
-import spray.json.DefaultJsonProtocol
-
 
 class EscherHttpDirectiveTest
   extends WordSpec
     with Matchers
     with ScalatestRouteTest
-    with DefaultJsonProtocol
     with ScalaFutures
     with EscherDirectives {
 

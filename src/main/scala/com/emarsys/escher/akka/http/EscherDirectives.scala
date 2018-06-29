@@ -9,7 +9,6 @@ import akka.http.scaladsl.server._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.emarsys.escher.EscherException
-import spray.json._
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,13 +39,13 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherAuthenticate(trustedServiceNames: List[String])
+  def escherAuthenticate(trustedServices: List[String])
                         (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
-    extract (_.request) map authenticate(trustedServiceNames) flatMap (onComplete(_)) flatMap passOrReject
+    extract (_.request) map authenticateFor(trustedServices) flatMap (onComplete(_)) flatMap passOrReject
 
-  private def authenticate(trustedServiceNames: List[String])
-                          (implicit ec: ExecutionContext, mat: Materializer): PartialFunction[HttpRequest, Future[String]] = {
-    case r: HttpRequest if checkForwardedProtoHeader(r) => authenticate(trustedServiceNames, r)
+  private def authenticateFor(trustedServices: List[String])
+                             (implicit ec: ExecutionContext, mat: Materializer): HttpRequest => Future[String] = {
+    case r: HttpRequest if checkForwardedProtoHeader(r) => authenticate(trustedServices, r)
     case _                                              => Future.failed(new EscherException("Failed to parse HTTP request"))
   }
 
@@ -63,10 +62,4 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
 
   private val mustBeHttps: HttpHeader => Boolean = _.value().contains("https")
 
-  def parseBody[T](body: String)(inner: T => Route)(implicit format: RootJsonFormat[T]): Route = {
-    Try(body.parseJson.convertTo[T]) match {
-      case Success(parsed) => inner(parsed)
-      case Failure(x)      => reject(MalformedRequestContentRejection(x.getMessage, x.getCause))
-    }
-  }
 }
