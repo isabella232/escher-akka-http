@@ -34,12 +34,10 @@ class EscherHttpDirectiveTest
 
     "reject forwarded http request" in {
       val request = Get(s"http://$host/path?query=param")
-        .withHeaders(
-          List(
-            RawHeader("X-Forwarded-Proto", "http"),
-            RawHeader("host", host)
-          )
-        )
+        .withHeaders(List(
+          RawHeader("X-Forwarded-Proto", "http"),
+          RawHeader("host", host)
+        ))
 
       sign(request) ~> route ~> check {
         handled shouldBe false
@@ -55,14 +53,12 @@ class EscherHttpDirectiveTest
       }
     }
 
-    "signed and forwarded https request" in {
+    "sign and forward https request" in {
       val request = Get(s"https://$host/path?query=param")
-        .withHeaders(
-          List(
-            RawHeader("X-Forwarded-Proto", "https"),
-            RawHeader("host", host)
-          )
-        )
+        .withHeaders(List(
+          RawHeader("X-Forwarded-Proto", "https"),
+          RawHeader("host", host)
+        ))
 
       sign(request) ~> route ~> check {
         handled shouldBe true
