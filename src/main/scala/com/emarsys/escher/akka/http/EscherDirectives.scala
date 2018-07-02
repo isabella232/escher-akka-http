@@ -52,7 +52,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
   private def passOrReject(implicit logger: LoggingAdapter): PartialFunction[Try[String], Directive0] = {
     case Success(_)  => pass
     case Failure(ex) =>
-      logger.debug(ex.getMessage)
+      logger.info("Escher auth failed: " + ex.getMessage)
       reject(AuthenticationFailedRejection(AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
   }
 

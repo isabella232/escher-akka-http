@@ -1,5 +1,5 @@
 
-val scalaV = "2.12.4"
+val scalaV = "2.12.6"
 
 name          := "escher-akka-http"
 organization  := "com.emarsys"
@@ -16,7 +16,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"  %% "akka-http"            % akkaHttpV,
     "com.typesafe.akka"  %% "akka-http-testkit"    % akkaHttpV  % "test",
     "org.scalatest"      %% "scalatest"            % scalaTestV % "test",
-    "com.emarsys"        %  "escher"               % "0.3"
+    "com.emarsys"        %  "escher"               % "0.3.1"
   )
 }
 
