@@ -20,7 +20,8 @@ class EscherHttpDirectiveTest
   implicit val logger = system.log
 
   def route: Route =
-    (get & path("path") & escherAuthenticate(escherConfig.services))(complete("OK"))
+    (get & path("path") & escherAuthenticate(escherConfig.services))(complete("OK")) ~
+    (get & path("path2") & escherAuthenticate(escherConfig.services, true))(complete("OK"))
 
   override val escherConfig: EscherConfig =
     new EscherConfig(com.typesafe.config.ConfigFactory.load().getConfig("escher"))
@@ -57,6 +58,19 @@ class EscherHttpDirectiveTest
       val request = Get(s"https://$host/path?query=param")
         .withHeaders(List(
           RawHeader("X-Forwarded-Proto", "https"),
+          RawHeader("host", host)
+        ))
+
+      sign(request) ~> route ~> check {
+        handled shouldBe true
+        status shouldBe OK
+      }
+    }
+
+    "sign and forward http request if the forwarded proto http allowed" in {
+      val request = Get(s"https://$host/path2?query=param")
+        .withHeaders(List(
+          RawHeader("X-Forwarded-Proto", "http"),
           RawHeader("host", host)
         ))
 

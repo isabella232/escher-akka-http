@@ -39,13 +39,13 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherAuthenticate(trustedServices: List[String])
+  def escherAuthenticate(trustedServices: List[String], allowNonHttpsForwardedProto: Boolean = escherConfig.allowNonHttpsForwardedProto)
                         (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
-    extract (_.request) map authenticateFor(trustedServices) flatMap (onComplete(_)) flatMap passOrReject
+    extract (_.request) map authenticateFor(trustedServices, allowNonHttpsForwardedProto) flatMap (onComplete(_)) flatMap passOrReject
 
-  private def authenticateFor(trustedServices: List[String])
+  private def authenticateFor(trustedServices: List[String], allowNonHttpsForwardedProto: Boolean)
                              (implicit ec: ExecutionContext, mat: Materializer): HttpRequest => Future[String] = {
-    case r: HttpRequest if checkForwardedProtoHeader(r) => authenticate(trustedServices, r)
+    case r: HttpRequest if allowNonHttpsForwardedProto || checkForwardedProtoHeader(r) => authenticate(trustedServices, r)
     case _                                              => Future.failed(new EscherException("Failed to parse HTTP request"))
   }
 

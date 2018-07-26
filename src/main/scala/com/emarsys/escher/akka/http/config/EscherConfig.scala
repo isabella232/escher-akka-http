@@ -11,6 +11,7 @@ class EscherConfig(config: Config) {
   val vendorKey: String = config.getString("vendor-key")
   val hostName: String = config.getString("hostname")
   val port: Int = config.getInt("port")
+  val allowNonHttpsForwardedProto: Boolean = Try(config.getBoolean("allow-non-https-forwarded-proto")).getOrElse(false)
 
   val credentialScope: String = config.getString("credential-scope")
   val headersToSign = Try{config.getStringList("headers-to-sign").asScala}.getOrElse(List("host", "X-Ems-Date"))
