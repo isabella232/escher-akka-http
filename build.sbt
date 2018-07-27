@@ -3,7 +3,7 @@ val scalaV = "2.12.6"
 
 name          := "escher-akka-http"
 organization  := "com.emarsys"
-version       := "1.0.1"
+version       := "1.0.2"
 
 scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
