@@ -23,6 +23,8 @@ class EscherHttpDirectiveTest
     (get & path("path") & escherAuthenticate(escherConfig.services))(complete("OK")) ~
     (get & path("path2") & escherAuthenticate(escherConfig.services, true))(complete("OK"))
 
+  def justForValidation = escherAuthenticate(escherConfig.services){complete("OK")}
+
   override val escherConfig: EscherConfig =
     new EscherConfig(com.typesafe.config.ConfigFactory.load().getConfig("escher"))
 

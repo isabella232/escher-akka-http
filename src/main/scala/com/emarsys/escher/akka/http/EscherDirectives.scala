@@ -5,14 +5,14 @@ import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.model.headers.HttpChallenge
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server._
+import akka.http.scaladsl.server.{Directive0, _}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.emarsys.escher.EscherException
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Try, Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
 
@@ -39,9 +39,13 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     }
   }
 
-  def escherAuthenticate(trustedServices: List[String], allowNonHttpsForwardedProto: Boolean = escherConfig.allowNonHttpsForwardedProto)
-                        (implicit ec: ExecutionContext, mat: Materializer, logger: LoggingAdapter): Directive0 =
-    extract (_.request) map authenticateFor(trustedServices, allowNonHttpsForwardedProto) flatMap (onComplete(_)) flatMap passOrReject
+  def escherAuthenticate(trustedServices: List[String], allowNonHttpsForwardedProto: Boolean = escherConfig.allowNonHttpsForwardedProto): Directive0 = Directive[Unit]{
+    inner => ctx =>
+      val resp = authenticateFor(trustedServices, allowNonHttpsForwardedProto)(ctx.executionContext, ctx.materializer)(ctx.request)
+      onComplete(resp){
+        passOrReject(inner({}))(ctx.log)
+      }(ctx)
+  }
 
   private def authenticateFor(trustedServices: List[String], allowNonHttpsForwardedProto: Boolean)
                              (implicit ec: ExecutionContext, mat: Materializer): HttpRequest => Future[String] = {
@@ -49,8 +53,8 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
     case _                                              => Future.failed(new EscherException("Failed to parse HTTP request"))
   }
 
-  private def passOrReject(implicit logger: LoggingAdapter): PartialFunction[Try[String], Directive0] = {
-    case Success(_)  => pass
+  private def passOrReject(ok: Route)(implicit logger: LoggingAdapter): PartialFunction[Try[String], Route] = {
+    case Success(_)  => ok
     case Failure(ex) =>
       logger.info("Escher auth failed: " + ex.getMessage)
       reject(AuthenticationFailedRejection(AuthenticationFailedRejection.CredentialsRejected, HttpChallenge("Basic", "Escher")))
