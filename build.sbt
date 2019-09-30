@@ -38,11 +38,5 @@ inThisBuild(List(
     Developer("suliatis", "Attila Suli", "attila.suli@emarsys.com", url("https://github.com/suliatis")),
     Developer("tg44", "Gergo Torcsvari", "gergo.torcsvari@emarsys.com", url("https://github.com/tg44")),
     Developer("tt0th", "Tibor Toth", "tibor.toth@emarsys.com", url("https://github.com/tt0th"))
-  ),
-  scmInfo := Some(ScmInfo(url("https://github.com/emartech/escher-akka-http"), "scm:git:git@github.com:emartech/escher-akka-http.git")),
-
-  // These are the sbt-release-early settings to configure
-  pgpPublicRing := file("./travis/local.pubring.asc"),
-  pgpSecretRing := file("./travis/local.secring.asc"),
-  releaseEarlyWith := SonatypePublisher
+  )
 ))

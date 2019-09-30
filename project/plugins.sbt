@@ -1,3 +1,3 @@
 logLevel := Level.Warn
 
-addSbtPlugin("ch.epfl.scala" % "sbt-release-early" % "2.1.1")
+addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.4.31")
