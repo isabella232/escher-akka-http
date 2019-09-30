@@ -1,4 +1,4 @@
-val scalaV = "2.12.6"
+val scalaV = "2.12.10"
 
 name          := "escher-akka-http"
 organization  := "com.emarsys"
@@ -21,7 +21,7 @@ libraryDependencies ++= {
   )
 }
 
-scalaVersion in ThisBuild := scalaV
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 inThisBuild(List(
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
