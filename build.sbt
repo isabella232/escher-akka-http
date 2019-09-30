@@ -7,9 +7,9 @@ scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {
-  val akkaHttpV  = "10.1.9"
-  val akkaStreamV = "2.5.18"
-  val scalaTestV = "3.0.1"
+  val akkaHttpV  = "10.1.10"
+  val akkaStreamV = "2.5.25"
+  val scalaTestV = "3.0.8"
   Seq(
     "com.typesafe.akka"  %% "akka-http-core"       % akkaHttpV,
     "com.typesafe.akka"  %% "akka-http"            % akkaHttpV,
@@ -17,7 +17,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"  %% "akka-stream"          % akkaStreamV,
     "com.typesafe.akka"  %% "akka-stream-testkit"  % akkaStreamV,
     "org.scalatest"      %% "scalatest"            % scalaTestV % "test",
-    "com.emarsys"        %  "escher"               % "0.3.1"
+    "com.emarsys"        %  "escher"               % "0.3.2"
   )
 }
 
