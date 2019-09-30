@@ -1,9 +1,11 @@
 sudo: false
 language: scala
-scala:
-- 2.12.6
 jdk:
-- oraclejdk11
+  - oraclejdk11
+
+scala_version_212: &scala_version_212 "2.12.10"
+scala_version_213: &scala_version_213 "2.13.1"
+
 before_install:
   - git fetch --tags
 stages:
@@ -12,18 +14,23 @@ stages:
     if: ((branch = master AND type = push) OR (tag IS present)) AND NOT fork
 jobs:
   include:
-    - name: test
-      script: sbt test
+    - stage: test
+      name: test 2.12
+      script: sbt ++$TRAVIS_SCALA_VERSION test
+      scala: *scala_version_212
+    - stage: test
+      name: test 2.13
+      script: sbt ++$TRAVIS_SCALA_VERSION test
+      scala: *scala_version_213
     - stage: release
       name: release
       script: sbt ci-release
 cache:
   directories:
-  - "$HOME/.ivy2/cache"
+  - "$HOME/.cache/coursier"
   - "$HOME/.sbt"
 before_cache:
-- find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
-- find $HOME/.sbt        -name "*.lock"               -print -delete
+  - find $HOME/.sbt -name "*.lock" -print -delete
 env:
   global:
   - secure: OAO9Ni0hAj6+H8KJLue84aaJpMYPAAkm1ox6M4PDjotYc9bQ0u1jtGE8frH9oAahoZsmbKT+hB5UxWfQnFczguUVwrTXOJfsnbD10W0RhlQc+NhwSHiW4Tpz24AKr2j/rZg5KK3CWmEit0MLtBa6MuC78yrSOfGE4RfKr8NdC0GuT93UrYcU2ns1kCg9aTUWGtYUGm4gmpkqJKssf731aYskdNTpTJ1YJNBY+kGnORdRp07gLXL96UByQIQH76v5BQIO0VthqiXioIW4t/ZdLih9n/d21amgxoMKhuAjWDuwGTlQPz3Dw3mHRAeyg11SMEzbyC332fLSsXhab+JmlAI9eyU4p7rKE92Bb2r8MXt/xANTrVQ15BOmTnZ76raGox/lO+Fc4y0ZriE2YcGDGm66OjWVZRR82z3rZZgOXWBuYAGv4GeQUTarFL5lcH30QPooPvxIvcPhohTcpEhgmjFuuvl+fwp1uD+WDn1TET6KmKI3P8phgq9whCIxGwOxQoDeEAE93ekQC2YUeXok+4bT27O2W8evkO/auiYTKmiZGDEjbwZPblPZDudyBhAQ8UIgydhg66WK8FuRuKUNB+5Sx0JhHLCLWKMumxr9LJ2qWHhcqu0NcIcy5t3YIxEhGcYehf9tPeb5ENIMdd41XBcAEeJwXGLPABUDDnrg6xk=

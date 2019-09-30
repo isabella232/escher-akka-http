@@ -1,9 +1,7 @@
-val scalaV = "2.12.10"
-
-name          := "escher-akka-http"
 organization  := "com.emarsys"
+name          := "escher-akka-http"
+crossScalaVersions := List("2.13.1", "2.12.10")
 
-scalaVersion  := scalaV
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 libraryDependencies ++= {

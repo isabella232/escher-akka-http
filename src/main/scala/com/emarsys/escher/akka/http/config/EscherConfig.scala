@@ -14,7 +14,7 @@ class EscherConfig(config: Config) {
   val allowNonHttpsForwardedProto: Boolean = Try(config.getBoolean("allow-non-https-forwarded-proto")).getOrElse(false)
 
   val credentialScope: String = config.getString("credential-scope")
-  val headersToSign: Seq[String] = Try{config.getStringList("headers-to-sign").asScala}.getOrElse(List("host", "X-Ems-Date"))
+  val headersToSign: Seq[String] = Try{config.getStringList("headers-to-sign").asScala.toList}.getOrElse(List("host", "X-Ems-Date"))
 
   val trustedServices: List[Config] = config.getConfigList("trusted-services").asScala.toList
 
