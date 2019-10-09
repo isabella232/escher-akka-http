@@ -2,7 +2,8 @@ package com.emarsys.escher.akka.http.config
 import com.typesafe.config.Config
 
 import scala.collection.JavaConverters._
-import scala.util.Try
+import scala.io.Source
+import scala.util.{Success, Try}
 
 class EscherConfig(config: Config) {
   val authHeaderName: String = config.getString("auth-header-name")
@@ -23,8 +24,24 @@ class EscherConfig(config: Config) {
 
   def key(service: String): String = findTrustedService(service).map(_.getString("key")).getOrElse("")
 
-  def secret(service: String): String = findTrustedService(service).map(_.getString("secret")).getOrElse("")
+  def secret(service: String): String = findTrustedService(service).map(config => readFromFileOrConf(config, "secret")).getOrElse("")
 
   def credentialScope(service: String): String = findTrustedService(service).map(_.getString("credential-scope")).getOrElse(credentialScope)
+
+  private def readFromFileOrConf(config: Config, path: String): String = {
+    Try(config.getString(s"$path-file")) match {
+      case Success(fileName) => readFromFile(fileName)
+      case _                 => config.getString(path)
+    }
+  }
+
+  private def readFromFile(fileName: String): String = {
+    val source = Source.fromFile(fileName)
+    try {
+      source.mkString
+    } finally {
+      source.close()
+    }
+  }
 
 }
