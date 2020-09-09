@@ -21,7 +21,7 @@ class EscherHttpRequestTest extends AnyFlatSpec with Matchers {
 
   private val escherRequest = new EscherHttpRequest(httpRequest, "Hello ሴ")
 
-  "Spray Escher request" should "get body with utf8 characters" in {
+  "Escher request" should "get body with utf8 characters" in {
 
     escherRequest.getBody shouldBe "Hello ሴ"
   }
@@ -49,7 +49,7 @@ class EscherHttpRequestTest extends AnyFlatSpec with Matchers {
   it should "add other header with existing key" in {
     val eRequest = new EscherHttpRequest(httpRequest, "")
     eRequest.addHeader("host", "bar")
-    eRequest.getRequestHeaders() shouldBe List(new EscherRequest.Header("host", "trunk.suite.ett.local"), new EscherRequest.Header("Host", "bar")).asJava
+    eRequest.getRequestHeaders().asScala should contain theSameElementsAs List(new EscherRequest.Header("host", "trunk.suite.ett.local"), new EscherRequest.Header("Host", "bar"))
   }
 
   it should "return true when has header called after adding it" in {
