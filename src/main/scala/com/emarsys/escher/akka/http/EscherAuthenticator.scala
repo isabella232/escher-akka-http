@@ -24,15 +24,9 @@ trait EscherAuthenticator {
 
     for {
       body <- Unmarshal(httpRequest.entity).to[String]
-    } yield {
-      val escherHttpRequest = new EscherHttpRequest(httpRequest.addHeader(RawHeader("Content-type", "application/json")), body)
-      escher.authenticate(
-        escherHttpRequest,
-        keyPool.asJava,
-        address
-      )
-      body
-    }
+      escherHttpRequest = new EscherHttpRequest(httpRequest.addHeader(RawHeader("Content-type", "application/json")), body)
+      _ = escher.authenticate(escherHttpRequest, keyPool.asJava, address)
+    } yield body
   }
 
   def createEscherForSigning(serviceName: String): Escher = new Escher(escherConfig.credentialScope(serviceName))
