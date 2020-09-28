@@ -20,7 +20,7 @@ trait EscherAuthenticator {
 
     val escher = setupEscher(createEscherForAuth())
     val address = new InetSocketAddress(escherConfig.hostName, escherConfig.port)
-    val keymap = serviceNames.map(serviceName => escherConfig.key(serviceName) -> escherConfig.secret(serviceName)).toMap
+    val keyPool = serviceNames.flatMap(escherConfig.keyPool).toMap
 
     for {
       body <- Unmarshal(httpRequest.entity).to[String]
@@ -28,7 +28,7 @@ trait EscherAuthenticator {
       val escherHttpRequest = new EscherHttpRequest(httpRequest.addHeader(RawHeader("Content-type", "application/json")), body)
       escher.authenticate(
         escherHttpRequest,
-        keymap.asJava,
+        keyPool.asJava,
         address
       )
       body
