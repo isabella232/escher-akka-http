@@ -33,7 +33,7 @@ trait EscherAuthenticator {
 
   def createEscherForAuth(): Escher = new Escher(escherConfig.credentialScope)
 
-  def setupEscher(escher: Escher) = escher
+  def setupEscher(escher: Escher): Escher = escher
     .setAuthHeaderName(escherConfig.authHeaderName)
     .setDateHeaderName(escherConfig.dateHeaderName)
     .setAlgoPrefix(escherConfig.algoPrefix)
