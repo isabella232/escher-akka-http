@@ -20,7 +20,7 @@ class EscherConfig(config: Config) {
   val trustedServices: List[Config] = config.getConfigList("trusted-services").asScala.toList
 
   private def findTrustedService(service: String) = trustedServices.find(_.getString("name") == service)
-  val services = trustedServices.map(_.getString("name")).toList
+  val services: List[String] = trustedServices.map(_.getString("name"))
 
   def key(service: String): String = findTrustedService(service).map(_.getString("key")).getOrElse("")
 
