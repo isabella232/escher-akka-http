@@ -6,10 +6,14 @@ import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.emarsys.escher.akka.http.config.EscherConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
+import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext
 
 class EscherHttpDirectiveTest
   extends AnyWordSpec
@@ -57,6 +61,21 @@ class EscherHttpDirectiveTest
       }
     }
 
+    "accept requests signed with passive keys" in {
+      val request = Get(s"https://$host/path?query=param").withHeaders(List(RawHeader("host", host)))
+      val serviceWithKeyPool = "service1"
+      val keyPool = escherConfig.keyPool(serviceWithKeyPool)
+      val activeKey: String = escherConfig.key(serviceWithKeyPool)
+
+      val passiveCredentials = keyPool.toMap.filterKeys(_ != activeKey )
+      val (passiveKey, passiveSecret) = passiveCredentials.head
+
+      signWithCredentials(serviceWithKeyPool, passiveKey, passiveSecret)(request) ~> route ~> check {
+        handled shouldBe true
+        status shouldBe OK
+      }
+    }
+
     "sign and forward https request" in {
       val request = Get(s"https://$host/path?query=param")
         .withHeaders(List(
@@ -94,4 +113,25 @@ class EscherHttpDirectiveTest
       }
     }
   }
+
+  private def signWithCredentials(serviceName:String, key: String, secret: String)(request: HttpRequest)(
+    implicit ec: ExecutionContext
+  ): HttpRequest = {
+
+    val escher = setupEscher(createEscherForSigning(serviceName))
+    val defaultSignedHeaders = escherConfig.headersToSign
+
+    for {
+      body <- Unmarshal(request.entity).to[String]
+    } yield {
+      val escherRequest: EscherHttpRequest = new EscherHttpRequest(request, body)
+      escher.signRequest(
+        escherRequest,
+        key,
+        secret,
+        defaultSignedHeaders.union(Nil).asJava
+      )
+      escherRequest.getHttpRequest
+    }
+  }.futureValue
 }

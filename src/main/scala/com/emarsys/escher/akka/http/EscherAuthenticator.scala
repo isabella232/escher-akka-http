@@ -20,26 +20,20 @@ trait EscherAuthenticator {
 
     val escher = setupEscher(createEscherForAuth())
     val address = new InetSocketAddress(escherConfig.hostName, escherConfig.port)
-    val keymap = serviceNames.map(serviceName => escherConfig.key(serviceName) -> escherConfig.secret(serviceName)).toMap
+    val keyPool = serviceNames.flatMap(escherConfig.keyPool).toMap
 
     for {
       body <- Unmarshal(httpRequest.entity).to[String]
-    } yield {
-      val escherHttpRequest = new EscherHttpRequest(httpRequest.addHeader(RawHeader("Content-type", "application/json")), body)
-      escher.authenticate(
-        escherHttpRequest,
-        keymap.asJava,
-        address
-      )
-      body
-    }
+      escherHttpRequest = new EscherHttpRequest(httpRequest.addHeader(RawHeader("Content-type", "application/json")), body)
+      _ = escher.authenticate(escherHttpRequest, keyPool.asJava, address)
+    } yield body
   }
 
   def createEscherForSigning(serviceName: String): Escher = new Escher(escherConfig.credentialScope(serviceName))
 
   def createEscherForAuth(): Escher = new Escher(escherConfig.credentialScope)
 
-  def setupEscher(escher: Escher) = escher
+  def setupEscher(escher: Escher): Escher = escher
     .setAuthHeaderName(escherConfig.authHeaderName)
     .setDateHeaderName(escherConfig.dateHeaderName)
     .setAlgoPrefix(escherConfig.algoPrefix)
