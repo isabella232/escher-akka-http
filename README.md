@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/emartech/escher-akka-http.svg?branch=master)](https://travis-ci.org/emartech/escher-akka-http) [![Maven Central](https://img.shields.io/maven-central/v/com.emarsys/escher-akka-http_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.emarsys%22%20AND%20a:%22escher-akka-http_2.12%22)
-
-# escher-akka-http
+# Escher Akka HTTP [![Build Status](https://github.com/emartech/escher-akka-http/workflows/CI/badge.svg)](https://github.com/emartech/escher-akka-http/actions?query=workflow%3ACI) [![Maven Central](https://img.shields.io/maven-central/v/com.emarsys/escher-akka-http_2.13.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.emarsys%22%20AND%20a:%22escher-akka-http_2.13%22)
 
 ## Usage
 
