@@ -10,7 +10,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.emarsys.escher.EscherException
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -33,7 +33,7 @@ trait EscherDirectives extends RequestBuilding with EscherAuthenticator {
         escherRequest,
         escherConfig.key(serviceName),
         escherConfig.secret(serviceName),
-        defaultSignedHeaders.union(headers.map(_.name)).asJava
+        (defaultSignedHeaders ++ headers.map(_.name)).asJava
       )
       escherRequest.getHttpRequest
     }

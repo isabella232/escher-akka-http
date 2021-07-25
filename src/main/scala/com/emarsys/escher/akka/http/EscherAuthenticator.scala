@@ -9,7 +9,7 @@ import akka.stream.Materializer
 import com.emarsys.escher.Escher
 import com.emarsys.escher.akka.http.config.EscherConfig
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait EscherAuthenticator {

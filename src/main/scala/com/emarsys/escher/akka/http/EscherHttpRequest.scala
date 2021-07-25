@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.headers.{Host, RawHeader}
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import com.emarsys.escher.EscherRequest
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class EscherHttpRequest(var request: HttpRequest, body: String) extends EscherRequest {
 

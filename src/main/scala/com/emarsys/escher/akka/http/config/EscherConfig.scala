@@ -1,7 +1,7 @@
 package com.emarsys.escher.akka.http.config
 import com.typesafe.config.Config
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.io.Source
 import scala.util.{Success, Try}
 
@@ -58,7 +58,7 @@ class EscherConfig(config: Config) {
     def getConfigListOrNil(path: String): List[Config] = {
       Try {
         config.getConfigList(path).asScala.toList
-      }.toOption.toList.flatten
+      }.getOrElse(Nil)
     }
 
     def getKeyAndSecret: (String, String) = {

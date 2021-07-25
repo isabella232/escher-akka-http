@@ -1,6 +1,6 @@
 organization  := "com.emarsys"
 name          := "escher-akka-http"
-crossScalaVersions := List("2.13.6", "2.12.14")
+crossScalaVersions := List("3.0.1", "2.13.6", "2.12.14")
 
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
@@ -9,13 +9,14 @@ libraryDependencies ++= {
   val akkaHttpV  = "10.2.4"
   val scalaTestV = "3.2.9"
   Seq(
-    "com.typesafe.akka"  %% "akka-http-core"       % akkaHttpV,
-    "com.typesafe.akka"  %% "akka-http"            % akkaHttpV,
-    "com.typesafe.akka"  %% "akka-http-testkit"    % akkaHttpV  % Test,
-    "com.typesafe.akka"  %% "akka-stream"          % akkaStreamV,
-    "com.typesafe.akka"  %% "akka-stream-testkit"  % akkaStreamV % Test,
+    ("com.typesafe.akka"  %% "akka-http-core"       % akkaHttpV).cross(CrossVersion.for3Use2_13),
+    ("com.typesafe.akka"  %% "akka-http"            % akkaHttpV).cross(CrossVersion.for3Use2_13),
+    ("com.typesafe.akka"  %% "akka-http-testkit"    % akkaHttpV  % Test).cross(CrossVersion.for3Use2_13),
+    ("com.typesafe.akka"  %% "akka-stream"          % akkaStreamV).cross(CrossVersion.for3Use2_13),
+    ("com.typesafe.akka"  %% "akka-stream-testkit"  % akkaStreamV % Test).cross(CrossVersion.for3Use2_13),
     "org.scalatest"      %% "scalatest"            % scalaTestV % Test,
-    "com.emarsys"        %  "escher"               % "0.3.4"
+    "com.emarsys"        %  "escher"               % "0.3.4",
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
   )
 }
 

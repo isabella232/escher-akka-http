@@ -1,5 +1,6 @@
 package com.emarsys.escher.akka.http
 
+import akka.event.LoggingAdapter
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.model.headers.RawHeader
@@ -12,7 +13,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContext
 
 class EscherHttpDirectiveTest
@@ -22,7 +23,7 @@ class EscherHttpDirectiveTest
     with ScalaFutures
     with EscherDirectives {
 
-  implicit val logger = system.log
+  implicit val logger: LoggingAdapter = system.log
 
   def route: Route =
     (get & path("path") & escherAuthenticate(escherConfig.services))(complete("OK")) ~
@@ -67,8 +68,7 @@ class EscherHttpDirectiveTest
       val keyPool = escherConfig.keyPool(serviceWithKeyPool)
       val activeKey: String = escherConfig.key(serviceWithKeyPool)
 
-      val passiveCredentials = keyPool.toMap.filterKeys(_ != activeKey )
-      val (passiveKey, passiveSecret) = passiveCredentials.head
+      val (passiveKey, passiveSecret) = keyPool.find{ case (key, _) => key != activeKey }.get
 
       signWithCredentials(serviceWithKeyPool, passiveKey, passiveSecret)(request) ~> route ~> check {
         handled shouldBe true
@@ -129,7 +129,7 @@ class EscherHttpDirectiveTest
         escherRequest,
         key,
         secret,
-        defaultSignedHeaders.union(Nil).asJava
+        defaultSignedHeaders.asJava
       )
       escherRequest.getHttpRequest
     }
