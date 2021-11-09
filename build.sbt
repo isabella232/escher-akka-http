@@ -16,7 +16,7 @@ libraryDependencies ++= {
     ("com.typesafe.akka"  %% "akka-stream-testkit"  % akkaStreamV % Test).cross(CrossVersion.for3Use2_13),
     "org.scalatest"      %% "scalatest"            % scalaTestV % Test,
     "com.emarsys"        %  "escher"               % "0.3.5",
-    "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0"
   )
 }
 
